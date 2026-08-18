@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QPASS·FINAL 모의고사 - 3학년 보건간호과 국시대비반 관리</title>
+<style>
+:root{
+  --deep: #0f4c3a;
+  --deep2: #0a3428;
+  --mint: #e9f7f0;
+  --mint-box: #eafaf3;
+  --peach-box: #fdf3e3;
+  --lav-box: #f1eefb;
+  --accent: #14805f;
+  --accent-dark: #0d5e45;
+  --yellow-bg: #fdf6de;
+  --yellow-border: #f0d878;
+  --ink: #1c2b26;
+  --sub: #667f76;
+  --border: #dcece4;
+  --pass: #1a9d63;
+  --fail: #e0334f;
+  --radius: 18px;
+  --shadow: 0 10px 30px rgba(10,52,40,0.18);
+}
+
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;overflow-x:hidden;}
+body{
+  font-family:'Pretendard','Malgun Gothic','Apple SD Gothic Neo',sans-serif;
+  background: linear-gradient(165deg,#1a7a5c 0%, var(--deep2) 100%);
+  color:var(--ink);
+  min-height:100vh;
+  word-break:keep-all;
+  line-height:1.5;
+}
+
+.wrap{
+  max-width:640px;
+  margin:0 auto;
+  padding:32px 16px 60px;
+  overflow-x:hidden;
+}
+
+.topbar{
+  color:#fff;
+  padding:6px 4px 22px;
+}
+.topbar h1{
+  margin:0;
+  font-size:20px;
+}
+.topbar .sub{
+  margin-top:6px;
+  font-size:13px;
+  opacity:0.85;
+}
+.topbar a.btn.ghost{
+  color:#fff;border-color:rgba(255,255,255,.5);
+}
+
+/* Hero card (start screens) */
+.hero-card{
+  background:#fff;
+  border-radius:24px;
+  box-shadow: var(--shadow);
+  padding:36px 28px 30px;
+  text-align:center;
+}
+.hero-icon{ font-size:38px; margin-bottom:10px; }
+.hero-card h1{
+  margin:4px 0 2px;
+  font-size:20px;
+  color:var(--accent-dark);
+  font-weight:800;
+}
+.hero-card .hero-sub{ font-size:14px; color:var(--ink); font-weight:600; margin-bottom:4px; }
+.hero-card .hero-meta{ font-size:12.5px; color:var(--sub); margin-bottom:20px; }
+
+.stat-row{ display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:18px; }
+.stat-box{ border-radius:14px; padding:14px 6px; text-align:center; }
+.stat-box:nth-child(1){ background:var(--mint-box); }
+.stat-box:nth-child(2){ background:var(--peach-box); }
+.stat-box:nth-child(3){ background:var(--mint-box); }
+.stat-box .num{ font-size:19px; font-weight:800; color:var(--accent-dark); }
+.stat-box .label{ font-size:11.5px; color:var(--sub); margin-top:2px; }
+
+.callout{
+  background:var(--yellow-bg);
+  border:1.5px solid var(--yellow-border);
+  border-radius:12px;
+  padding:12px 14px;
+  font-size:12.5px;
+  color:#7a5c12;
+  margin-bottom:20px;
+  line-height:1.7;
+}
+.callout b{ color:#5c4200; }
+
+.field-list{ display:flex; flex-direction:column; gap:10px; margin-bottom:18px; }
+
+/* generic card for non-hero screens */
+.card{
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding:22px;
+  margin-bottom:16px;
+}
+.card h2{
+  margin-top:0;
+  font-size:16px;
+  color:var(--accent-dark);
+  border-bottom:2px solid var(--mint);
+  padding-bottom:8px;
+  margin-bottom:14px;
+  font-weight:800;
+}
+
+.btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  background: var(--deep);
+  color:#fff;
+  border:none;
+  border-radius:12px;
+  padding:15px 20px;
+  font-size:15px;
+  font-weight:700;
+  cursor:pointer;
+  transition: opacity .12s ease, transform .12s ease;
+  text-decoration:none;
+}
+.btn:hover{ opacity:.92; }
+.btn:active{ transform: translateY(1px); }
+.btn.secondary{ background:#fff; color:var(--accent-dark); border:1.5px solid var(--accent); }
+.btn.ghost{ background:transparent; border:1.5px solid var(--border); color:var(--accent-dark); }
+.btn.wide{ width:100%; }
+.btn:disabled{ background:#c9d8d1; color:#fff; cursor:not-allowed; opacity:1; }
+
+select, input[type=text]{
+  width:100%;
+  padding:14px 14px;
+  border-radius:12px;
+  border:1.5px solid var(--border);
+  font-size:14.5px;
+  background:#fbfdfc;
+  color:var(--ink);
+  appearance:none;
+}
+select:focus, input:focus{ outline:2px solid var(--accent); outline-offset:1px; }
+
+.grid{ display:grid; gap:12px; }
+.grid.cols-2{ grid-template-columns:1fr 1fr; }
+.grid.cols-3{ grid-template-columns:repeat(3,1fr); }
+@media (max-width:600px){
+  .grid.cols-2, .grid.cols-3{ grid-template-columns:1fr; }
+}
+
+.confirm-box{
+  background: var(--mint-box);
+  border:1.5px solid var(--accent);
+  border-radius:12px;
+  padding:12px 14px;
+  font-size:13.5px;
+  font-weight:700;
+  color:var(--accent-dark);
+  margin-top:2px;
+}
+
+.tag{
+  display:inline-block;
+  padding:4px 10px;
+  border-radius:999px;
+  font-size:12px;
+  font-weight:700;
+}
+.tag.pass{ background:#e1f6ea; color:var(--pass); }
+.tag.fail{ background:#fbe1e5; color:var(--fail); }
+
+table{ width:100%; border-collapse:collapse; font-size:13.5px; background:#fff;}
+th,td{ padding:10px 8px; text-align:center; border-bottom:1px solid var(--border); }
+th{ background: var(--mint); color:var(--accent-dark); font-weight:700; position:sticky; top:0; }
+tr.row-fail td{ background:#fff3f4; }
+tr:hover td{ background:#fafdfb; }
+
+.qgrid{ display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:6px; min-width:0; }
+@media (max-width:560px){ .qgrid{ grid-template-columns:repeat(3,minmax(0,1fr)); } }
+.qitem{ border:1.5px solid var(--border); border-radius:10px; padding:6px 2px; text-align:center; background:#fff; min-width:0; overflow:hidden; }
+.qitem .qnum{ font-size:11px; color:var(--sub); }
+.qitem .opts{ display:flex; justify-content:center; gap:1px; margin-top:4px; flex-wrap:wrap; }
+.qitem button{ width:18px;height:18px; border-radius:50%; border:1.5px solid var(--border); background:#fff; font-size:9.5px; cursor:pointer; padding:0; flex-shrink:0; }
+.qitem button.sel{ background:var(--accent); color:#fff; border-color:var(--accent); }
+.qitem.unanswered{ border-color:var(--fail); }
+.qitem.wrong{ background:#fdecec; border-color:var(--fail); }
+.qitem.correct{ background:#eafaf1; border-color:var(--pass); }
+
+.timer{ font-variant-numeric: tabular-nums; font-weight:800; font-size:19px; color:var(--accent-dark); background:var(--mint-box); padding:6px 12px; border-radius:10px; }
+.timer.warn{ color:#fff; background:var(--fail); }
+
+.progressbar{ height:8px; border-radius:6px; background:var(--mint); overflow:hidden; margin:10px 0; }
+.progressbar > div{ height:100%; background:var(--accent); }
+
+.center{ text-align:center; }
+.muted{ color:var(--sub); font-size:13px; }
+.big-num{ font-size:40px; font-weight:800; color:var(--accent-dark); }
+
+.nav-tabs{ display:flex; gap:6px; margin-bottom:16px; flex-wrap:wrap; }
+.nav-tabs button{
+  padding:10px 16px; border:1.5px solid rgba(255,255,255,.35); background:rgba(255,255,255,.08); color:#fff;
+  font-weight:700; cursor:pointer; font-size:13.5px; border-radius:10px;
+}
+.nav-tabs button.active{ background:#fff; color:var(--accent-dark); border-color:#fff; }
+
+.loading{ text-align:center; padding:40px; color:#fff; }
+
+.print-btn{
+  position:fixed; bottom:20px; right:20px;
+  background:var(--deep); color:#fff; border:none; border-radius:24px;
+  padding:12px 18px; font-weight:700; font-size:13.5px; cursor:pointer;
+  box-shadow:0 4px 14px rgba(0,0,0,.25); z-index:50;
+}
+@media print{ .no-print{ display:none !important; } }
+
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="hero-card">
+    <div class="hero-icon">🏥</div>
+    <h1>QPASS · FINAL TEST 모의고사</h1>
+    <div class="hero-sub">3학년 보건간호과 국시대비반</div>
+    <div class="hero-meta">QPASS 10회 · FINAL TEST 7회 · 105문항 · 100분</div>
+
+    <div class="stat-row">
+      <div class="stat-box"><div class="num">105</div><div class="label">문항</div></div>
+      <div class="stat-box"><div class="num">5지</div><div class="label">선다형</div></div>
+      <div class="stat-box"><div class="num">즉시</div><div class="label">채점</div></div>
+    </div>
+
+    <div class="callout">
+      🎯 <b>합격 기준: 70% (74문항) 이상 정답</b><br>
+      시작 후 QPASS 또는 FINAL TEST를 선택합니다. 문제는 종이 문제집을 보며 풀고, 이 화면엔 답(①~⑤)만 입력합니다.
+    </div>
+
+    <div class="field-list">
+      <a class="btn wide" href="student.html">👩‍🎓 학생 모드로 시작하기 →</a>
+      <a class="btn wide secondary" href="teacher.html">🧑‍🏫 교사 모드로 시작하기 →</a>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
