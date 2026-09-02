@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>교사 모드 - QPASS·FINAL 모의고사</title>
+<style>
+:root{
+  --deep: #0f4c3a;
+  --deep2: #0a3428;
+  --mint: #e9f7f0;
+  --mint-box: #eafaf3;
+  --peach-box: #fdf3e3;
+  --lav-box: #f1eefb;
+  --accent: #14805f;
+  --accent-dark: #0d5e45;
+  --yellow-bg: #fdf6de;
+  --yellow-border: #f0d878;
+  --ink: #1c2b26;
+  --sub: #667f76;
+  --border: #dcece4;
+  --pass: #1a9d63;
+  --fail: #e0334f;
+  --radius: 18px;
+  --shadow: 0 10px 30px rgba(10,52,40,0.18);
+}
+
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;overflow-x:hidden;}
+body{
+  font-family:'Pretendard','Malgun Gothic','Apple SD Gothic Neo',sans-serif;
+  background: linear-gradient(165deg,#1a7a5c 0%, var(--deep2) 100%);
+  color:var(--ink);
+  min-height:100vh;
+  word-break:keep-all;
+  line-height:1.5;
+}
+
+.wrap{
+  max-width:640px;
+  margin:0 auto;
+  padding:32px 16px 60px;
+  overflow-x:hidden;
+}
+
+.topbar{
+  color:#fff;
+  padding:6px 4px 22px;
+}
+.topbar h1{
+  margin:0;
+  font-size:20px;
+}
+.topbar .sub{
+  margin-top:6px;
+  font-size:13px;
+  opacity:0.85;
+}
+.topbar a.btn.ghost{
+  color:#fff;border-color:rgba(255,255,255,.5);
+}
+
+/* Hero card (start screens) */
+.hero-card{
+  background:#fff;
+  border-radius:24px;
+  box-shadow: var(--shadow);
+  padding:36px 28px 30px;
+  text-align:center;
+}
+.hero-icon{ font-size:38px; margin-bottom:10px; }
+.hero-card h1{
+  margin:4px 0 2px;
+  font-size:20px;
+  color:var(--accent-dark);
+  font-weight:800;
+}
+.hero-card .hero-sub{ font-size:14px; color:var(--ink); font-weight:600; margin-bottom:4px; }
+.hero-card .hero-meta{ font-size:12.5px; color:var(--sub); margin-bottom:20px; }
+
+.stat-row{ display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:18px; }
+.stat-box{ border-radius:14px; padding:14px 6px; text-align:center; }
+.stat-box:nth-child(1){ background:var(--mint-box); }
+.stat-box:nth-child(2){ background:var(--peach-box); }
+.stat-box:nth-child(3){ background:var(--mint-box); }
+.stat-box .num{ font-size:19px; font-weight:800; color:var(--accent-dark); }
+.stat-box .label{ font-size:11.5px; color:var(--sub); margin-top:2px; }
+
+.callout{
+  background:var(--yellow-bg);
+  border:1.5px solid var(--yellow-border);
+  border-radius:12px;
+  padding:12px 14px;
+  font-size:12.5px;
+  color:#7a5c12;
+  margin-bottom:20px;
+  line-height:1.7;
+}
+.callout b{ color:#5c4200; }
+
+.field-list{ display:flex; flex-direction:column; gap:10px; margin-bottom:18px; }
+
+/* generic card for non-hero screens */
+.card{
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding:22px;
+  margin-bottom:16px;
+}
+.card h2{
+  margin-top:0;
+  font-size:16px;
+  color:var(--accent-dark);
+  border-bottom:2px solid var(--mint);
+  padding-bottom:8px;
+  margin-bottom:14px;
+  font-weight:800;
+}
+
+.btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  background: var(--deep);
+  color:#fff;
+  border:none;
+  border-radius:12px;
+  padding:15px 20px;
+  font-size:15px;
+  font-weight:700;
+  cursor:pointer;
+  transition: opacity .12s ease, transform .12s ease;
+  text-decoration:none;
+}
+.btn:hover{ opacity:.92; }
+.btn:active{ transform: translateY(1px); }
+.btn.secondary{ background:#fff; color:var(--accent-dark); border:1.5px solid var(--accent); }
+.btn.ghost{ background:transparent; border:1.5px solid var(--border); color:var(--accent-dark); }
+.btn.wide{ width:100%; }
+.btn:disabled{ background:#c9d8d1; color:#fff; cursor:not-allowed; opacity:1; }
+
+select, input[type=text]{
+  width:100%;
+  padding:14px 14px;
+  border-radius:12px;
+  border:1.5px solid var(--border);
+  font-size:14.5px;
+  background:#fbfdfc;
+  color:var(--ink);
+  appearance:none;
+}
+select:focus, input:focus{ outline:2px solid var(--accent); outline-offset:1px; }
+
+.grid{ display:grid; gap:12px; }
+.grid.cols-2{ grid-template-columns:1fr 1fr; }
+.grid.cols-3{ grid-template-columns:repeat(3,1fr); }
+@media (max-width:600px){
+  .grid.cols-2, .grid.cols-3{ grid-template-columns:1fr; }
+}
+
+.confirm-box{
+  background: var(--mint-box);
+  border:1.5px solid var(--accent);
+  border-radius:12px;
+  padding:12px 14px;
+  font-size:13.5px;
+  font-weight:700;
+  color:var(--accent-dark);
+  margin-top:2px;
+}
+
+.tag{
+  display:inline-block;
+  padding:4px 10px;
+  border-radius:999px;
+  font-size:12px;
+  font-weight:700;
+}
+.tag.pass{ background:#e1f6ea; color:var(--pass); }
+.tag.fail{ background:#fbe1e5; color:var(--fail); }
+
+table{ width:100%; border-collapse:collapse; font-size:13.5px; background:#fff;}
+th,td{ padding:10px 8px; text-align:center; border-bottom:1px solid var(--border); }
+th{ background: var(--mint); color:var(--accent-dark); font-weight:700; position:sticky; top:0; }
+tr.row-fail td{ background:#fff3f4; }
+tr:hover td{ background:#fafdfb; }
+
+.qgrid{ display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:6px; min-width:0; }
+@media (max-width:560px){ .qgrid{ grid-template-columns:repeat(3,minmax(0,1fr)); } }
+.qitem{ border:1.5px solid var(--border); border-radius:10px; padding:6px 2px; text-align:center; background:#fff; min-width:0; overflow:hidden; }
+.qitem .qnum{ font-size:11px; color:var(--sub); }
+.qitem .opts{ display:flex; justify-content:center; gap:1px; margin-top:4px; flex-wrap:wrap; }
+.qitem button{ width:18px;height:18px; border-radius:50%; border:1.5px solid var(--border); background:#fff; font-size:9.5px; cursor:pointer; padding:0; flex-shrink:0; }
+.qitem button.sel{ background:var(--accent); color:#fff; border-color:var(--accent); }
+.qitem.unanswered{ border-color:var(--fail); }
+.qitem.wrong{ background:#fdecec; border-color:var(--fail); }
+.qitem.correct{ background:#eafaf1; border-color:var(--pass); }
+
+.timer{ font-variant-numeric: tabular-nums; font-weight:800; font-size:19px; color:var(--accent-dark); background:var(--mint-box); padding:6px 12px; border-radius:10px; }
+.timer.warn{ color:#fff; background:var(--fail); }
+
+.progressbar{ height:8px; border-radius:6px; background:var(--mint); overflow:hidden; margin:10px 0; }
+.progressbar > div{ height:100%; background:var(--accent); }
+
+.center{ text-align:center; }
+.muted{ color:var(--sub); font-size:13px; }
+.big-num{ font-size:40px; font-weight:800; color:var(--accent-dark); }
+
+.nav-tabs{ display:flex; gap:6px; margin-bottom:16px; flex-wrap:wrap; }
+.nav-tabs button{
+  padding:10px 16px; border:1.5px solid rgba(255,255,255,.35); background:rgba(255,255,255,.08); color:#fff;
+  font-weight:700; cursor:pointer; font-size:13.5px; border-radius:10px;
+}
+.nav-tabs button.active{ background:#fff; color:var(--accent-dark); border-color:#fff; }
+
+.loading{ text-align:center; padding:40px; color:#fff; }
+
+.print-btn{
+  position:fixed; bottom:20px; right:20px;
+  background:var(--deep); color:#fff; border:none; border-radius:24px;
+  padding:12px 18px; font-weight:700; font-size:13.5px; cursor:pointer;
+  box-shadow:0 4px 14px rgba(0,0,0,.25); z-index:50;
+}
+@media print{
+  .no-print{ display:none !important; }
+  body{ background:#fff !important; }
+  .nav-tabs, #loadingBox { display:none !important; }
+  .card{ box-shadow:none !important; border:1px solid #ccc !important; }
+}
+
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+<script>
+/* CDN이 차단된 환경(학교망 등)을 대비해 보조 CDN을 한 번 더 시도한다.
+   둘 다 실패해도 아래 자체 그래프로 대체되므로 화면은 정상 동작한다. */
+if(typeof Chart === 'undefined'){
+  document.write('<scr'+'ipt src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"><\/scr'+'ipt>');
+}
+</script>
+</head>
+<body>
+<div class="topbar">
+  <div class="wrap" style="padding:0;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+    <div>
+      <h1>🏥 교사 모드</h1>
+      <div class="sub">3학년 보건간호과 국시대비반 관리 대시보드</div>
+    </div>
+    <a href="index.html" class="btn ghost" style="color:#fff;border-color:rgba(255,255,255,.4);">처음으로</a>
+  </div>
+</div>
+
+<!-- 비밀번호 잠금 화면 -->
+<div class="wrap" id="lockScreen">
+  <div class="card" style="max-width:420px;margin:40px auto;text-align:center;">
+    <div style="font-size:40px;margin-bottom:8px;">🔒</div>
+    <h2 style="border:none;">교사 모드 로그인</h2>
+    <p class="muted">비밀번호를 입력하세요.</p>
+    <input type="password" id="pwInput" placeholder="비밀번호"
+           style="width:100%;padding:12px 14px;margin-top:14px;border:1.5px solid #cfe0d8;border-radius:10px;font-size:15px;text-align:center;letter-spacing:4px;">
+    <div id="pwError" style="display:none;color:var(--fail);font-size:13px;margin-top:10px;">비밀번호가 올바르지 않습니다.</div>
+    <button class="btn wide" id="pwBtn" style="margin-top:14px;">들어가기</button>
+  </div>
+</div>
+
+<div class="wrap" id="mainScreen" style="display:none;">
+  <!-- 모고 종류 / 반 선택 -->
+  <div class="card no-print" style="padding:16px 18px;">
+    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+      <label class="muted" style="margin:0;font-weight:700;">모고 종류</label>
+      <select id="examTypeSelect" style="max-width:180px;margin:0;"></select>
+      <label class="muted" style="margin:0;font-weight:700;">반 선택</label>
+      <select id="classSelect" style="max-width:220px;margin:0;"></select>
+      <span class="muted" id="classInfo" style="margin-left:auto;"></span>
+    </div>
+  </div>
+
+  <div class="nav-tabs">
+    <button class="tab-btn active" data-tab="passfail">회차별 Pass/Fail</button>
+    <button class="tab-btn" data-tab="trend">학생별 추이</button>
+    <button class="tab-btn" data-tab="topwrong">회차별 최다오답 TOP20</button>
+  </div>
+
+  <div id="loadingBox" class="card loading">데이터를 불러오는 중입니다...</div>
+
+  <!-- TAB 1: Pass/Fail -->
+  <div class="tab-panel" id="panel-passfail" style="display:none;">
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+        <h2 style="border:none;margin:0;padding:0;">✅ 회차별 Pass / Fail 명단</h2>
+        <button class="btn secondary no-print" onclick="window.print()" style="padding:8px 14px;font-size:13px;">🖨️ 인쇄 / PDF 저장</button>
+      </div>
+      <p class="muted" style="margin-top:10px;">합격 = 총점 <b id="pfThresholdLabel"></b> 이상 <b>그리고</b> 전 과목 40% 이상(과락 없음)</p>
+      <label class="muted">회차 선택</label>
+      <select id="pfRoundSelect"></select>
+      <p class="muted" id="pfCount" style="margin-top:10px;font-weight:700;"></p>
+      <div style="margin-top:16px;overflow-x:auto;">
+        <table id="pfTable">
+          <thead><tr><th style="width:50px;">번호</th><th>이름</th><th>정답수</th><th>점수</th><th>과락 과목</th><th>결과</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <p class="muted" id="pfEmpty" style="display:none;">해당 회차에 아직 응시 기록이 없습니다.</p>
+    </div>
+  </div>
+
+  <!-- TAB 2: 학생별 추이 -->
+  <div class="tab-panel" id="panel-trend" style="display:none;">
+    <div class="card">
+      <h2>📈 학생별 점수 추이 (<span id="trendCount">-</span>명 전체)</h2>
+      <p class="muted" id="allTrendNote" style="display:none;"></p>
+      <canvas id="allTrendChart" height="110"></canvas>
+    </div>
+    <div class="card">
+      <h2>👤 개별 학생 추이</h2>
+      <select id="studentTrendSelect"></select>
+      <canvas id="singleTrendChart" height="100" style="margin-top:12px;"></canvas>
+    </div>
+  </div>
+
+  <!-- TAB 3: 회차별 최다오답 TOP20 -->
+  <div class="tab-panel" id="panel-topwrong" style="display:none;">
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+        <h2 style="border:none;margin:0;padding:0;">🔥 회차별 최다오답 TOP 20</h2>
+        <button class="btn secondary no-print" onclick="window.print()" style="padding:8px 14px;font-size:13px;">🖨️ 인쇄 / PDF 저장</button>
+      </div>
+      <p class="muted">선택한 <b>반</b>의 <b>해당 회차</b>에서 가장 많이 틀린 20문항입니다.</p>
+      <label class="muted">회차 선택</label>
+      <select id="twRoundSelect"></select>
+      <div id="topWrongList" style="margin-top:12px;"></div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+// 모의고사 종류별 정답 데이터 (105문항, 1~5)
+const QPASS_ANSWER_KEY = {
+  1:  [5,1,1,3,1,5,1,3,5,4, 3,1,3,2,1,1,2,5,1,5, 3,2,2,5,4,1,3,2,3,5, 1,4,1,5,4,3,4,3,5,2, 4,4,5,1,3,1,4,1,1,4, 2,3,5,4,1,3,5,4,5,3, 2,4,5,2,2,3,2,3,1,3, 4,4,4,2,5,4,2,3,5,2, 3,4,2,5,2,5,1,1,4,2, 5,5,1,2,4,3,4,3,2,1, 5,2,4,5,2],
+  2:  [1,1,5,1,1,1,4,5,1,3, 2,4,2,5,5,5,5,5,5,5, 3,4,4,2,4,1,4,1,2,3, 4,3,2,3,3,5,1,2,3,1, 2,5,5,2,5,5,3,5,5,5, 1,3,5,5,5,3,1,4,3,5, 5,4,4,1,3,2,3,4,1,2, 1,2,4,5,3,3,2,5,5,5, 4,4,5,2,4,1,5,2,3,3, 4,3,1,5,2,3,4,5,4,3, 3,5,5,3,5],
+  3:  [3,2,4,2,4,2,5,2,4,2, 2,4,4,5,5,5,2,5,2,1, 5,4,3,2,4,4,5,5,2,4, 2,5,1,2,2,5,1,3,4,4, 2,3,1,3,4,3,4,5,2,5, 1,3,5,4,2,2,3,2,2,3, 5,5,4,5,4,1,3,2,5,4, 2,5,1,2,4,4,2,4,1,4, 5,2,1,4,1,5,4,1,1,4, 4,5,2,5,2,5,2,4,5,1, 5,3,3,3,1],
+  4:  [4,2,5,4,1,4,2,2,1,4, 3,1,2,1,1,4,4,5,2,4, 4,4,1,4,5,3,4,3,2,5, 4,4,4,2,1,2,5,2,4,1, 4,4,1,2,3,3,4,1,4,1, 5,4,1,4,5,1,5,5,2,3, 4,5,1,4,1,3,2,3,3,2, 1,1,2,3,5,5,2,1,4,3, 1,2,4,3,3,3,3,3,4,1, 4,5,1,5,1,3,5,2,3,4, 5,5,3,4,2],
+  5:  [3,3,3,3,5,3,4,4,2,3, 2,3,4,2,3,5,4,4,5,4, 1,2,3,5,3,2,1,2,2,3, 1,4,2,2,5,5,2,2,2,2, 4,2,4,3,4,5,3,2,1,1, 4,4,5,1,4,2,3,3,5,5, 2,1,5,3,3,5,4,2,5,4, 4,4,3,5,4,4,5,2,4,3, 3,3,2,3,4,5,1,5,4,3, 2,3,2,3,4,2,3,5,1,5, 5,5,4,2,3],
+  6:  [5,2,3,1,4,1,4,3,3,1, 1,5,1,5,5,5,4,5,5,2, 3,3,1,3,2,2,5,3,2,3, 5,4,2,3,4,1,1,4,4,5, 1,1,1,4,1,2,3,3,4,2, 5,4,3,1,2,2,4,1,5,5, 3,1,2,3,4,4,3,1,5,3, 4,4,5,4,5,2,4,4,2,3, 4,4,1,1,5,1,5,5,5,4, 2,2,1,5,4,3,5,3,3,4, 3,5,2,1,5],
+  7:  [3,3,2,3,1,2,5,3,2,3, 1,5,5,4,5,3,4,2,5,5, 3,3,3,5,4,3,2,5,1,3, 5,2,1,5,4,5,3,1,3,2, 1,4,4,4,3,5,1,5,5,4, 4,5,2,4,3,4,4,3,5,4, 5,1,3,2,1,2,2,3,5,2, 1,5,2,1,5,5,5,2,2,4, 1,5,1,2,5,4,3,3,5,1, 1,4,4,4,5,5,5,1,3,2, 2,5,5,5,3],
+  8:  [5,1,5,1,4,1,4,4,2,2, 2,4,4,5,2,4,1,5,1,4, 3,5,3,5,5,2,3,5,1,5, 1,5,1,5,1,4,5,2,1,3, 5,1,5,3,5,4,2,2,5,1, 3,2,1,4,2,2,4,2,3,5, 3,4,2,1,4,4,5,2,2,5, 5,5,1,2,5,2,2,4,5,5, 5,5,3,2,4,2,5,4,4,2, 3,5,3,4,4,2,2,1,3,4, 5,5,2,1,2],
+  9:  [3,4,1,3,1,3,4,5,2,5, 2,3,2,3,5,4,3,2,3,5, 5,4,3,1,5,2,4,3,2,3, 2,2,5,5,5,5,2,3,3,4, 3,5,1,4,4,4,4,3,3,2, 5,2,1,2,1,1,4,1,3,5, 5,1,3,5,4,2,2,3,5,4, 3,4,2,2,4,5,5,1,2,3, 5,5,4,3,3,1,5,2,5,5, 3,4,3,3,1,2,5,2,1,2, 1,3,4,5,3],
+  10: [4,4,3,5,1,1,5,2,2,2, 4,5,3,5,3,5,3,5,4,1, 5,5,4,1,5,1,3,1,5,3, 2,3,1,3,5,2,5,3,3,5, 2,1,2,5,5,2,4,1,4,5, 4,5,4,1,3,3,2,3,1,5, 4,1,2,3,3,3,5,4,3,5, 3,5,2,5,1,5,5,3,1,4, 1,3,2,3,2,5,5,2,2,2, 2,4,5,5,3,5,2,4,2,4, 5,3,3,4,5]
+};
+
+// FINAL TEST 정답 (7회차)
+const FINAL_ANSWER_KEY = {
+  1: [3,2,5,3,3,4,2,2,4,5, 3,1,4,1,2,3,4,1,3,2, 3,2,3,3,4,1,1,5,5,4, 1,1,3,3,2,5,2,3,4,4, 1,4,2,3,5,2,2,3,2,3, 1,4,5,4,4,4,5,1,5,3, 4,2,5,4,4,5,4,1,3,4, 3,3,2,2,1,4,1,4,2,2, 4,2,4,3,3,3,1,2,5,1, 2,3,2,4,3,2,5,3,3,3, 4,2,5,2,4],
+  2: [3,5,1,1,3,2,4,5,2,3, 2,3,3,2,1,2,1,2,1,5, 4,1,4,1,3,3,1,2,2,2, 3,4,1,5,3,5,4,2,2,2, 2,1,4,3,4,1,4,1,1,4, 5,4,5,1,1,2,5,5,3,3, 1,1,3,1,2,4,4,3,4,1, 1,2,1,3,5,1,3,2,3,4, 2,2,1,3,2,2,4,2,4,2, 2,1,3,3,3,3,1,4,2,2, 3,4,5,2,4],
+  3: [3,2,1,4,1,3,1,4,4,4, 3,5,2,2,1,2,4,1,4,3, 1,5,1,5,1,3,4,2,3,3, 5,2,1,4,1,2,4,3,5,1, 5,2,1,4,1,5,1,1,3,1, 2,3,1,4,1,3,1,1,3,5, 2,4,3,4,1,5,2,1,5,2, 4,3,3,5,1,5,4,1,1,2, 2,5,1,1,1,4,3,1,3,1, 3,2,4,1,5,4,1,2,1,4, 2,4,3,5,4],
+  4: [1,3,2,4,5,2,1,4,2,5, 3,5,2,1,2,4,5,2,3,1, 2,1,5,4,3,4,2,3,4,4, 1,5,4,1,1,5,3,1,2,4, 1,2,5,4,5,2,4,4,5,3, 3,5,1,4,2,1,4,2,3,4, 2,1,3,1,2,4,5,4,3,1, 1,5,5,2,4,4,1,4,4,5, 1,4,1,5,3,4,3,5,3,5, 4,4,1,4,4,2,5,1,5,1, 2,5,2,1,4],
+  5: [3,3,4,1,5,2,2,1,3,5, 4,1,1,4,4,1,4,2,3,2, 5,3,4,5,5,2,2,4,2,3, 5,2,3,5,2,1,4,2,4,4, 1,2,5,4,4,3,4,3,2,3, 2,3,1,4,4,2,3,3,2,1, 3,1,3,2,1,3,2,1,4,1, 3,1,1,4,3,3,5,4,4,4, 4,1,2,1,4,2,2,3,3,1, 2,4,3,5,3,5,3,1,1,2, 4,5,4,3,2],
+  6: [5,4,3,3,5,4,5,1,3,2, 5,5,4,1,1,3,5,5,4,4, 3,1,3,1,3,1,2,5,3,5, 3,5,4,4,5,1,2,2,5,4, 2,1,2,1,2,4,1,5,4,3, 2,2,3,1,1,4,1,1,5,4, 2,5,4,1,2,1,2,3,2,1, 3,1,3,5,3,2,3,3,2,2, 5,3,1,2,5,5,5,4,3,1, 2,1,3,1,3,2,3,1,5,1, 3,4,5,2,5],
+  7: [4,4,1,4,4,4,4,3,3,1, 1,3,5,1,2,3,1,2,5,1, 5,1,3,5,1,3,1,5,3,5, 3,5,3,5,5,1,2,3,4,3, 4,3,2,5,1,1,2,4,1,3, 1,3,5,2,2,2,3,2,3,4, 3,3,1,5,3,5,3,2,1,1, 5,3,4,4,5,4,2,3,5,5, 3,2,5,4,4,5,3,3,5,2, 1,1,2,1,1,2,1,4,5,4, 2,4,5,4,2]
+
+};
+
+/* ---------- 모고 종류 설정 ---------- */
+const EXAM_TYPES = {
+  qpass: { key:'qpass', label:'QPASS', totalRounds: 10, answerKey: QPASS_ANSWER_KEY },
+  final: { key:'final', label:'FINAL TEST', totalRounds: 7,  answerKey: FINAL_ANSWER_KEY }
+};
+
+/* =====================================================================
+   3학년 보건간호과 국시대비반 - 공통 데이터 / 채점 로직
+   (student.html, teacher.html 양쪽에 동일하게 인라인됩니다)
+   ===================================================================== */
+
+/* ---------- 반 명렬 ---------- */
+const CLASS_LIST = ["3학년 7반", "3학년 8반"];
+
+const ROSTER = {
+  "3학년 7반": ["강민지","권이현","김나영","김나은","김다현","김민솔","김한솔","배보경",
+                "양지은","여지윤","임지수","정다혜","조나윤","주수현","황윤주","황지윤"],
+  "3학년 8반": ["김도경","김수진","김아진","김지경","김현아","박세진","신정민","오희승",
+                "이승연","이예진","임서영","정아름","정윤지","정인혜","최다연","한재연"]
+};
+
+/* ---------- 교사 모드 비밀번호 ---------- */
+const TEACHER_PASSWORD = "1590";
+
+/* ---------- 시험 구성 (회차수는 EXAM_TYPES[type].totalRounds 사용) ---------- */
+const QUESTIONS_PER_ROUND = 105;
+const TIME_LIMIT_MINUTES = 100;
+
+/* 총점 합격 기준 (실제 국가시험은 60%. 교내 기준을 바꾸려면 이 값만 수정) */
+const PASS_THRESHOLD = 0.7;
+
+/* 과목별 과락 기준 (실제 국가시험 기준: 과목별 40% 미만이면 과락) */
+const SUBJECT_MIN_RATIO = 0.4;
+
+/* 간호조무사 국가시험 105문항 과목 구성 */
+const SUBJECTS = [
+  { key:"basic",     name:"기초간호학개요", from:1,  to:35 },
+  { key:"pubnurse",  name:"보건간호학개요", from:36, to:50 },
+  { key:"pubhealth", name:"공중보건학개론", from:51, to:70 },
+  { key:"practice",  name:"실기",           from:71, to:105 }
+];
+
+/* ---------- 채점 ---------- */
+function gradeExam(examType, round, answers){
+  const key = EXAM_TYPES[examType].answerKey[round];
+  let correct = 0;
+  const wrongQuestions = [];
+  for(let q=1;q<=QUESTIONS_PER_ROUND;q++){
+    if(answers[q] === key[q-1]) correct++;
+    else wrongQuestions.push(q);
+  }
+
+  const subjects = SUBJECTS.map(s=>{
+    const total = s.to - s.from + 1;
+    let c = 0;
+    for(let q=s.from;q<=s.to;q++){ if(answers[q] === key[q-1]) c++; }
+    const ratio = c/total;
+    return {
+      key: s.key, name: s.name,
+      correct: c, total: total,
+      ratio: ratio,
+      pct: Math.round(ratio*1000)/10,
+      cut: Math.ceil(total*SUBJECT_MIN_RATIO),   // 과락을 면하는 최소 정답 수
+      fail: ratio < SUBJECT_MIN_RATIO
+    };
+  });
+
+  const failedSubjects = subjects.filter(s=>s.fail);
+  const totalRatio = correct/QUESTIONS_PER_ROUND;
+  const totalPass  = totalRatio >= PASS_THRESHOLD;
+
+  return {
+    correct: correct,
+    score: Math.round(totalRatio*1000)/10,
+    totalRatio: totalRatio,
+    totalPass: totalPass,                       // 총점 기준 통과 여부
+    subjects: subjects,
+    failedSubjects: failedSubjects,
+    hasSubjectFail: failedSubjects.length > 0,
+    pass: totalPass && failedSubjects.length === 0,  // 최종 합격 = 총점 + 과락 없음
+    wrongQuestions: wrongQuestions
+  };
+}
+
+/* ---------- 학생별 결과 멘트 ---------- */
+function buildComment(result, name){
+  const s = result.score;
+  const nm = name || "학생";
+  const weakest = result.subjects.slice().sort((a,b)=>a.ratio-b.ratio)[0];
+  const best    = result.subjects.slice().sort((a,b)=>b.ratio-a.ratio)[0];
+  const failNames = result.failedSubjects.map(x=>x.name).join(", ");
+
+  let title, body, mood;
+
+  // 1) 과락으로 인한 불합격 (총점은 넘었는데 특정 과목이 40% 미만)
+  if(result.totalPass && result.hasSubjectFail){
+    mood = "warn";
+    title = "총점은 합격선인데, 과락이 발목을 잡았어요";
+    body = nm+"님, 총점 "+s+"점은 충분히 합격선을 넘겼어요. 그런데 <b>"+failNames+
+           "</b> 과목이 40% 미만이라 실제 시험이었다면 불합격 처리됩니다. "+
+           "국가시험은 총점만으로 합격하지 않아요. 지금부터는 전체를 넓게 보기보다 "+
+           "<b>"+failNames+"</b>만 집중해서 끌어올리면 바로 합격권입니다. 이번 회차 오답부터 다시 풀어보세요.";
+  }
+  // 2) 총점도 미달 + 과락도 있음
+  else if(!result.totalPass && result.hasSubjectFail){
+    if(s >= 55){
+      mood = "warn";
+      title = "합격선이 눈앞이에요. 취약 과목부터 잡아봐요";
+      body = nm+"님, "+s+"점이면 합격선까지 얼마 남지 않았어요. 다만 <b>"+failNames+
+             "</b> 과목이 과락이라 이곳을 먼저 손봐야 합니다. 가장 약한 "+weakest.name+
+             " 과목은 "+weakest.total+"문항 중 "+weakest.correct+"문항 정답이었어요. "+
+             "여기서 "+Math.max(0, weakest.cut-weakest.correct)+"문항만 더 맞히면 과락은 벗어납니다. 충분히 가능한 숫자예요.";
+    } else {
+      mood = "bad";
+      title = "기초부터 차근차근 다시 쌓아봐요";
+      body = nm+"님, 이번 회차는 "+s+"점이었어요. 아직 전 과목이 고르게 부족한 단계라 "+
+             "문제풀이보다 개념 정리가 먼저 필요해요. 특히 <b>"+weakest.name+
+             "</b> 과목이 가장 약하니 이 단원 이론부터 다시 읽고 오답노트를 만들어보세요. "+
+             "지금 점수는 출발점일 뿐이고, 반복하면 반드시 오릅니다.";
+    }
+  }
+  // 3) 과락은 없는데 총점 미달
+  else if(!result.totalPass){
+    if(s >= 60){
+      mood = "warn";
+      title = "과락 없이 안정적이에요. 총점만 조금 더!";
+      body = nm+"님, 과목별로 무너진 곳 없이 고르게 풀었다는 점이 아주 좋아요. "+
+             "총점 "+s+"점으로 합격선까지 조금 남았습니다. "+
+             "가장 낮은 "+weakest.name+" 과목에서 몇 문항만 더 잡으면 바로 통과예요. "+
+             "이번 오답 문항만 정확히 복습해도 다음 회차엔 넘어갈 수 있어요.";
+    } else {
+      mood = "warn";
+      title = "과락은 면했어요. 이제 전체 점수를 올릴 차례";
+      body = nm+"님, 과락 과목이 없다는 건 기본기는 잡혀 있다는 뜻이에요. "+
+             "총점 "+s+"점에서 올리려면 문항 수가 많은 기초간호학개요와 실기(각 35문항)에서 "+
+             "점수를 만드는 게 가장 효율적입니다. 지금은 "+weakest.name+" 과목이 가장 약하니 여기부터 시작해보세요.";
+    }
+  }
+  // 4) 합격
+  else {
+    if(s >= 90){
+      mood = "great";
+      title = "최상위권이에요. 이 페이스를 유지하세요";
+      body = nm+"님, "+s+"점은 아주 훌륭한 성적이에요. 과락도 없고 전 과목이 안정적입니다. "+
+             "이제는 새로운 문제를 늘리기보다, 틀린 문항의 <b>오답 선지까지</b> 왜 틀렸는지 설명할 수 있는지 "+
+             "점검해보세요. 실전에서 흔들리지 않는 힘이 거기서 나옵니다.";
+    } else if(s >= 80){
+      mood = "great";
+      title = "안정적인 합격권이에요";
+      body = nm+"님, "+s+"점으로 여유 있게 합격권입니다. "+best.name+" 과목은 특히 잘하고 있어요. "+
+             "다만 "+weakest.name+" 과목이 상대적으로 낮으니 여기만 보완하면 90점대도 가능해요. "+
+             "실수로 틀린 문항과 몰라서 틀린 문항을 구분해 정리해보세요.";
+    } else {
+      mood = "ok";
+      title = "합격이에요! 다만 아직 여유는 부족해요";
+      body = nm+"님, "+s+"점으로 합격 기준은 넘겼어요. 축하합니다. "+
+             "다만 실전에서는 컨디션에 따라 몇 문항은 흔들릴 수 있으니 조금 더 여유를 만들어두면 좋아요. "+
+             "가장 낮은 "+weakest.name+" 과목을 집중 보완해서 안정권으로 올려봅시다.";
+    }
+  }
+
+  return { title: title, body: body, mood: mood };
+}
+
+/* ---------- 과목 요약 HTML (결과 화면 / 교사 화면 공용) ---------- */
+function subjectTableHTML(result){
+  let html = '<table class="subj-table"><thead><tr>'
+           + '<th style="text-align:left;">과목</th><th>정답</th><th>득점률</th><th>과락기준</th><th>판정</th>'
+           + '</tr></thead><tbody>';
+  result.subjects.forEach(s=>{
+    html += '<tr class="'+(s.fail?'subj-fail':'')+'">'
+          + '<td style="text-align:left;">'+s.name+'</td>'
+          + '<td>'+s.correct+' / '+s.total+'</td>'
+          + '<td>'+s.pct+'%</td>'
+          + '<td>'+s.cut+'문항 이상</td>'
+          + '<td>'+(s.fail?'<span class="tag fail">과락</span>':'<span class="tag pass">통과</span>')+'</td>'
+          + '</tr>';
+  });
+  html += '</tbody></table>';
+  return html;
+}
+
+
+</script>
+<script>
+// Google Apps Script 웹앱 배포 후 발급받은 URL을 여기에 넣으세요.
+// 예: https://script.google.com/macros/s/AKfycb.../exec
+const GAS_URL = "https://script.google.com/macros/s/AKfycbwj89CWcdyVuozGXixup7aTTB5257zGDeQxrIbZOTPbfbDzEW7Wg1FmpaYYcrmk2Mbr/exec";
+
+</script>
+<script>
+/* =========================================================
+   교사 모드 메인 로직
+   ========================================================= */
+
+/* ---------- 1. 비밀번호 로그인 ---------- */
+const lockScreen = document.getElementById('lockScreen');
+const mainScreen = document.getElementById('mainScreen');
+const pwInput = document.getElementById('pwInput');
+const pwBtn   = document.getElementById('pwBtn');
+const pwError = document.getElementById('pwError');
+
+function tryLogin(){
+  if(pwInput.value === TEACHER_PASSWORD){
+    lockScreen.style.display = 'none';
+    mainScreen.style.display = 'block';
+    try { sessionStorage.setItem('teacherAuth','1'); } catch(e){}
+    initAfterLogin();
+  } else {
+    pwError.style.display = 'block';
+    pwInput.value = '';
+    pwInput.focus();
+  }
+}
+pwBtn.addEventListener('click', tryLogin);
+pwInput.addEventListener('keydown', e=>{ if(e.key==='Enter') tryLogin(); });
+pwInput.addEventListener('input', ()=>{ pwError.style.display='none'; });
+
+// 같은 탭 안에서는 재입력 없이 유지
+let alreadyAuthed = false;
+try { alreadyAuthed = sessionStorage.getItem('teacherAuth') === '1'; } catch(e){}
+if(alreadyAuthed){
+  lockScreen.style.display = 'none';
+  mainScreen.style.display = 'block';
+} else {
+  setTimeout(()=>pwInput.focus(), 100);
+}
+
+/* ---------- 2. 상태 ---------- */
+let ALL_RECORDS = [];        // 서버에서 받은 전체 기록 (현재 선택된 모고 종류)
+let RECORDS = [];            // 현재 선택된 반의 기록
+let currentClass = CLASS_LIST[0];
+let currentExamType = 'qpass';
+let inited = false;
+
+/* ---------- 3. 탭 ---------- */
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.tab-panel').forEach(p=>p.style.display='none');
+    document.getElementById('panel-'+btn.dataset.tab).style.display='block';
+  });
+});
+
+/* ---------- 4. 셀렉트 채우기 ---------- */
+const examTypeSelect    = document.getElementById('examTypeSelect');
+const classSelect       = document.getElementById('classSelect');
+const pfRoundSelect     = document.getElementById('pfRoundSelect');
+const twRoundSelect     = document.getElementById('twRoundSelect');
+const studentTrendSelect= document.getElementById('studentTrendSelect');
+
+Object.values(EXAM_TYPES).forEach(t=>{
+  const o=document.createElement('option'); o.value=t.key; o.textContent=t.label;
+  examTypeSelect.appendChild(o);
+});
+examTypeSelect.value = currentExamType;
+
+CLASS_LIST.forEach(c=>{
+  const o=document.createElement('option'); o.value=c; o.textContent=c;
+  classSelect.appendChild(o);
+});
+
+function fillRoundOptions(){
+  const total = EXAM_TYPES[currentExamType].totalRounds;
+  [pfRoundSelect, twRoundSelect].forEach(sel=>{
+    sel.innerHTML = '';
+    for(let r=1;r<=total;r++){
+      const o=document.createElement('option'); o.value=r; o.textContent=r+'회'; sel.appendChild(o);
+    }
+  });
+}
+fillRoundOptions();
+document.getElementById('pfThresholdLabel').textContent = Math.round(PASS_THRESHOLD*100)+'%';
+
+function fillStudentTrendOptions(){
+  studentTrendSelect.innerHTML = '';
+  (ROSTER[currentClass]||[]).forEach(name=>{
+    const o=document.createElement('option'); o.value=name; o.textContent=name;
+    studentTrendSelect.appendChild(o);
+  });
+}
+
+examTypeSelect.addEventListener('change', ()=>{
+  currentExamType = examTypeSelect.value;
+  fillRoundOptions();
+  loadData();
+});
+classSelect.addEventListener('change', ()=>{
+  currentClass = classSelect.value;
+  fillStudentTrendOptions();
+  applyClassFilter();
+  renderAll();
+});
+pfRoundSelect.addEventListener('change', renderPassFail);
+twRoundSelect.addEventListener('change', renderTopWrong);
+studentTrendSelect.addEventListener('change', renderSingleTrend);
+
+/* ---------- 5. 데이터 로드 ---------- */
+function initAfterLogin(){
+  if(inited) return;
+  inited = true;
+  fillStudentTrendOptions();
+  loadData();
+}
+if(alreadyAuthed) initAfterLogin();
+
+function applyClassFilter(){
+  // 반 정보가 없는 예전 기록은 명렬에 이름이 있으면 그 반으로 간주
+  const roster = ROSTER[currentClass] || [];
+  RECORDS = ALL_RECORDS.filter(r=>{
+    if(r.cls) return r.cls === currentClass;
+    return roster.indexOf(r.student) !== -1;
+  });
+  const students = new Set(RECORDS.map(r=>r.student));
+  document.getElementById('classInfo').textContent =
+    currentClass + ' · 명렬 ' + roster.length + '명 · 응시기록 ' + RECORDS.length + '건 (' + students.size + '명 참여)';
+  document.getElementById('trendCount').textContent = roster.length;
+}
+
+function loadData(){
+  if(!GAS_URL || GAS_URL.indexOf('PASTE_YOUR')===0){
+    document.getElementById('loadingBox').textContent = '⚠ GAS_URL이 설정되지 않았습니다. Google Apps Script 배포 후 URL을 넣어주세요.';
+    return;
+  }
+  document.getElementById('loadingBox').style.display='block';
+  document.getElementById('loadingBox').textContent = '데이터를 불러오는 중입니다...';
+  fetch(GAS_URL + '?action=getAllScores&examType=' + encodeURIComponent(currentExamType))
+    .then(r=>r.json())
+    .then(data=>{
+      ALL_RECORDS = data.records || [];
+      document.getElementById('loadingBox').style.display='none';
+      // 데이터 로딩이 늦게 끝나도, 이미 다른 탭을 선택해둔 상태라면 그 탭만 보이게 유지한다.
+      // (예전에는 항상 panel-passfail을 강제로 열어서, 최다오답 탭 등과 함께 두 패널이
+      //  동시에 표시되어 인쇄 시 Pass/Fail 명단이 같이 출력되는 문제가 있었음)
+      const activeTabBtn = document.querySelector('.tab-btn.active');
+      const activeTab = activeTabBtn ? activeTabBtn.dataset.tab : 'passfail';
+      document.querySelectorAll('.tab-panel').forEach(p=>p.style.display='none');
+      document.getElementById('panel-'+activeTab).style.display='block';
+      applyClassFilter();
+      renderAll();
+    })
+    .catch(err=>{
+      document.getElementById('loadingBox').textContent = '데이터 로드 실패: '+err;
+    });
+}
+
+// 한 영역에서 오류가 나도 나머지 화면은 정상 표시되도록 개별 실행한다.
+// (예: 차트 라이브러리 CDN이 차단된 환경에서도 명단/해설/최다오답은 보여야 함)
+function safeRun(label, fn){
+  try { fn(); }
+  catch(err){ console.error('['+label+'] 렌더 실패:', err); }
+}
+
+function renderAll(){
+  safeRun('Pass/Fail', renderPassFail);
+  safeRun('전체추이',  renderAllTrend);
+  safeRun('개별추이',  renderSingleTrend);
+  safeRun('최다오답',  renderTopWrong);
+}
+
+/* ---------- 6. 회차별 Pass/Fail (과락 포함) ---------- */
+function renderPassFail(){
+  const round = parseInt(pfRoundSelect.value);
+  const records = RECORDS.filter(r=>r.round===round);
+  const tbody = document.querySelector('#pfTable tbody');
+  tbody.innerHTML='';
+  document.getElementById('pfEmpty').style.display = records.length===0 ? 'block':'none';
+  records.sort((a,b)=>b.score-a.score);
+  const passCount = records.filter(r=>r.pass).length;
+  document.getElementById('pfCount').textContent =
+    records.length===0 ? '' :
+    '총 응시 '+records.length+'명 (합격 '+passCount+'명 · 불합격 '+(records.length-passCount)+'명)';
+  records.forEach((r, idx)=>{
+    const tr = document.createElement('tr');
+    if(!r.pass) tr.className='row-fail';
+
+    // 과락 과목: 새 기록은 failedSubjects, 예전 기록은 정보 없음
+    let failCell;
+    if(r.failedSubjects && r.failedSubjects.length){
+      failCell = '<span style="color:var(--fail);font-weight:700;">'+r.failedSubjects.join(', ')+'</span>';
+    } else if(r.subjects && r.subjects.length){
+      failCell = '<span class="muted">없음</span>';
+    } else {
+      failCell = '<span class="muted">-</span>';
+    }
+
+    tr.innerHTML = '<td>'+(idx+1)+'</td>'
+                 + '<td>'+r.student+'</td>'
+                 + '<td>'+r.correct+'/105</td>'
+                 + '<td>'+r.score+'</td>'
+                 + '<td>'+failCell+'</td>'
+                 + '<td><span class="tag '+(r.pass?'pass':'fail')+'">'+(r.pass?'PASS':'FAIL')+'</span></td>';
+    tbody.appendChild(tr);
+  });
+}
+
+/* ---------- 7. 점수 추이 ---------- */
+/* =====================================================================
+   자체 점수 추이 그래프 (Chart.js가 없을 때 사용)
+   외부 라이브러리 없이 캔버스 기본 기능만 사용하므로
+   CDN이 차단된 네트워크에서도 항상 그려진다.
+   ===================================================================== */
+function drawSimpleTrend(canvasEl, records){
+  if(!canvasEl) return;
+  const recs = records.slice().sort((a,b)=>a.round-b.round);
+
+  // 캔버스를 가로 100%로 펼친 뒤 실제 표시 폭을 측정한다
+  canvasEl.style.width = '100%';
+  canvasEl.style.display = 'block';
+  const cssW = canvasEl.clientWidth || canvasEl.parentElement.clientWidth || 600;
+  const cssH = parseInt(canvasEl.getAttribute('height'), 10) || 140;
+  const dpr  = window.devicePixelRatio || 1;
+  canvasEl.width  = Math.round(cssW * dpr);
+  canvasEl.height = Math.round(cssH * dpr);
+  canvasEl.style.width  = cssW + 'px';
+  canvasEl.style.height = cssH + 'px';
+
+  const ctx = canvasEl.getContext('2d');
+  if(!ctx) return;
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  ctx.clearRect(0,0,cssW,cssH);
+
+  const padL=34, padR=12, padT=12, padB=22;
+  const w = cssW-padL-padR, h = cssH-padT-padB;
+  const yFor = v => padT + h - (v/100)*h;
+
+  // 가로 눈금선 (0/50/100점)
+  ctx.strokeStyle='#e3ece8'; ctx.lineWidth=1;
+  ctx.fillStyle='#8aa39a'; ctx.font='10px sans-serif'; ctx.textAlign='right';
+  [0,50,100].forEach(v=>{
+    const y=yFor(v);
+    ctx.beginPath(); ctx.moveTo(padL,y); ctx.lineTo(padL+w,y); ctx.stroke();
+    ctx.fillText(v+'', padL-6, y+3);
+  });
+
+  // 합격선
+  const cut = Math.round(PASS_THRESHOLD*100);
+  const cy = yFor(cut);
+  ctx.save();
+  ctx.strokeStyle='#e0334f'; ctx.setLineDash([5,4]);
+  ctx.beginPath(); ctx.moveTo(padL,cy); ctx.lineTo(padL+w,cy); ctx.stroke();
+  ctx.restore();
+  ctx.fillStyle='#e0334f'; ctx.textAlign='left';
+  ctx.fillText('합격선 '+cut, padL+3, cy-4);
+
+  if(recs.length===0) return;
+
+  const xFor = i => recs.length===1 ? padL+w/2 : padL + (i/(recs.length-1))*w;
+
+  // 영역 채우기
+  ctx.beginPath();
+  ctx.moveTo(xFor(0), yFor(recs[0].score));
+  recs.forEach((r,i)=>ctx.lineTo(xFor(i), yFor(r.score)));
+  ctx.lineTo(xFor(recs.length-1), padT+h);
+  ctx.lineTo(xFor(0), padT+h);
+  ctx.closePath();
+  ctx.fillStyle='rgba(20,128,95,0.15)';
+  ctx.fill();
+
+  // 선
+  ctx.beginPath();
+  recs.forEach((r,i)=>{ const x=xFor(i), y=yFor(r.score); i?ctx.lineTo(x,y):ctx.moveTo(x,y); });
+  ctx.strokeStyle='#14805f'; ctx.lineWidth=2; ctx.stroke();
+
+  // 점 + 라벨
+  ctx.textAlign='center';
+  recs.forEach((r,i)=>{
+    const x=xFor(i), y=yFor(r.score);
+    ctx.beginPath(); ctx.arc(x,y,3.5,0,Math.PI*2);
+    ctx.fillStyle='#14805f'; ctx.fill();
+    ctx.fillStyle='#0f4c3a'; ctx.font='bold 10px sans-serif';
+    ctx.fillText(r.score, x, y-8);
+    ctx.fillStyle='#8aa39a'; ctx.font='10px sans-serif';
+    ctx.fillText(r.round+'회', x, padT+h+14);
+  });
+}
+
+let allTrendChart=null, singleTrendChart=null;
+
+function renderAllTrend(){
+  const ctx = document.getElementById('allTrendChart');
+  if(typeof Chart === 'undefined'){
+    // 여러 명을 겹쳐 그리는 그래프는 라이브러리가 필요하므로 안내만 표시
+    const note = document.getElementById('allTrendNote');
+    if(note){
+      note.style.display='block';
+      note.textContent = '⚠ 그래프 라이브러리를 불러오지 못해 반 전체 그래프는 표시할 수 없습니다. (아래 개별 학생 추이는 정상 표시됩니다)';
+    }
+    return;
+  }
+  const roster = ROSTER[currentClass] || [];
+  const datasets = roster.map((name,i)=>{
+    const recs = RECORDS.filter(r=>r.student===name).sort((a,b)=>a.round-b.round);
+    const hue = Math.round(i*(360/Math.max(1,roster.length)));
+    return {
+      label:name,
+      data: recs.map(r=>({x:r.round, y:r.score})),
+      borderColor:'hsl('+hue+',55%,45%)',
+      backgroundColor:'transparent',
+      tension:0.2,
+      pointRadius:2
+    };
+  });
+  if(allTrendChart) allTrendChart.destroy();
+  allTrendChart = new Chart(ctx,{
+    type:'line',
+    data:{datasets},
+    options:{
+      parsing:false,
+      scales:{
+        x:{type:'linear', min:1, max:EXAM_TYPES[currentExamType].totalRounds, title:{display:true,text:'회차'}},
+        y:{min:0,max:100,title:{display:true,text:'점수'}}
+      },
+      plugins:{legend:{position:'bottom',labels:{boxWidth:10,font:{size:10}}}}
+    }
+  });
+}
+
+function renderSingleTrend(){
+  const name = studentTrendSelect.value;
+  const recs = RECORDS.filter(r=>r.student===name).sort((a,b)=>a.round-b.round);
+  const ctx = document.getElementById('singleTrendChart');
+  if(typeof Chart === 'undefined'){ drawSimpleTrend(ctx, recs); return; }
+  const cutLine = Math.round(PASS_THRESHOLD*100);
+  if(singleTrendChart) singleTrendChart.destroy();
+  singleTrendChart = new Chart(ctx,{
+    type:'line',
+    data:{
+      labels: recs.map(r=>r.round+'회'),
+      datasets:[
+        {label:name+' 점수', data:recs.map(r=>r.score), borderColor:'#16a878', backgroundColor:'rgba(22,168,120,.15)', fill:true, tension:.25, pointRadius:4},
+        {label:'합격선('+cutLine+'점)', data:recs.map(()=>cutLine), borderColor:'#d64550', borderDash:[6,4], pointRadius:0}
+      ]
+    },
+    options:{ scales:{y:{min:0,max:100}}, plugins:{legend:{position:'bottom'}} }
+  });
+}
+
+/* ---------- 8. 반별 · 회차별 최다오답 TOP20 (해설 없이 정답 번호만 표시) ---------- */
+function renderTopWrong(){
+  const round = parseInt(twRoundSelect.value);
+  const key = EXAM_TYPES[currentExamType].answerKey[round];
+  const records = RECORDS.filter(r=>r.round===round);
+  const box = document.getElementById('topWrongList');
+
+  if(!key){
+    box.innerHTML = '<p class="muted">'+EXAM_TYPES[currentExamType].label+' '+round+'회 정답이 아직 준비되지 않았습니다.</p>';
+    return;
+  }
+
+  if(records.length===0){
+    box.innerHTML = '<p class="muted">'+currentClass+' '+round+'회는 아직 응시 기록이 없습니다.</p>';
+    return;
+  }
+
+  const counts = {};
+  records.forEach(r=>{
+    (r.wrongQuestions||[]).forEach(q=>{ counts[q] = (counts[q]||0)+1; });
+  });
+
+  const arr = Object.keys(counts).map(q=>({ q: Number(q), cnt: counts[q] }));
+  // 오답 인원 많은 순 → 같으면 문항 번호 순
+  arr.sort((a,b)=> b.cnt-a.cnt || a.q-b.q );
+  const top20 = arr.slice(0,20);
+
+  if(top20.length===0){
+    box.innerHTML = '<p class="muted">🎉 이 회차는 오답 문항이 없습니다.</p>';
+    return;
+  }
+
+  const taken = records.length;
+  let html = '<h3 style="margin:0 0 12px;">'+currentClass+' · '+round+'회 최다오답 TOP '+top20.length
+           + ' <span class="muted" style="font-weight:400;font-size:13px;">(응시 '+taken+'명 기준)</span></h3>';
+  html += '<table><thead><tr><th style="width:60px;">순위</th><th style="width:70px;">문항</th><th style="width:70px;">정답</th><th>오답 인원 / 비율</th></tr></thead><tbody>';
+
+  top20.forEach((item,i)=>{
+    const ans = key[item.q-1];
+    const circled = ['①','②','③','④','⑤'][ans-1];
+    const rate = Math.round(item.cnt/taken*100);
+    html += '<tr><td>'+(i+1)+'</td><td>'+item.q+'번</td><td>'+circled+'</td>'
+          + '<td><span class="tag fail">오답 '+item.cnt+'명 / '+taken+'명 · '+rate+'%</span></td></tr>';
+  });
+  html += '</tbody></table>';
+  box.innerHTML = html;
+}
+</script>
+</body>
+</html>
